@@ -1,14 +1,16 @@
-const http = require("http");
 const bodyParser = require("body-parser");
 const express = require("express");
+const multer = require("multer");
+const upload = multer();
 
 const app = express();
 const port = process.env.PORT || 4000;
+app.use(upload.none());
 
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
-    extended: true,
+    extended: false,
   })
 );
 
@@ -22,10 +24,10 @@ app.get("/", (req, res) => {
 
 //POST method to perform operation
 app.post("/", function (req, res) {
-  const { operator_type, x, y } = req.body;
+  const { operation_type, x, y } = req.body;
 
   //Check if input are not empty
-  if (!operator_type || !x || !y) {
+  if (!operation_type || !x || !y) {
     return res.status(400).send({
       error: "Invalid request, pls input valid data and try again",
     });
@@ -38,50 +40,72 @@ app.post("/", function (req, res) {
     });
   }
 
-  //check that the operator_type is valid
-  const isOperatorValid =
-    operator_type === "+" ||
-    operator_type === "-" ||
-    operator_type === "*" ||
-    typeof operator_type === "string";
+  //check that the operation_type is valid
+  const isOperatorValid = typeof operation_type === "string";
   if (!isOperatorValid) {
     return res.status(400).send({
       error:
-        "Invalid operator type, operator type must be +, - , * or sentence",
+        "Invalid operator type, operator type must be addition, subtraction, or multiplication",
     });
   }
 
-  let addOperator;
-  let subtractOperator;
-  let multiplyOperator;
+  let addition;
+  let subtraction;
+  let multiplication;
+  const OPERATOR_TYPE = {
+    addition: {
+      type: "+",
+      value: "addition",
+    },
+    subtraction: {
+      type: "-",
+      value: "subtraction",
+    },
+    multiplication: {
+      type: "*",
+      value: "multiplication",
+    },
+  };
 
   //test the operator type is a string(word)
-  // checck that the required operator type exists
-  if (typeof operator_type === "string") {
-    addOperator =
-      operator_type.includes("add") || operator_type.includes("addition");
-    subtractOperator =
-      operator_type.includes("subtract") || operator_type.includes("minus");
-    multiplyOperator =
-      operator_type.includes("multiply") || operator_type.includes("times");
+  // check that the required operator type exists
+  addition =
+    operation_type.includes("add") || operation_type.includes("addition");
+  subtraction =
+    operation_type.includes("subtract") || operation_type.includes("minus");
+  multiplication =
+    operation_type.includes("multiply") || operation_type.includes("times");
+
+  const isOperatorExist = addition || multiplication || subtraction;
+
+  if (!isOperatorExist) {
+    return res.status(400).send({
+      error: "Invalid request, operator type must be present",
+    });
   }
 
-  let operator;
+  const validResponse = (operatorType, result) => {
+    return res.status(201).send({
+      slackUsername: "Toluu",
+      operation_type: operatorType,
+      result,
+    });
+  };
 
-  // assign operator as required
-  if (addOperator) operator = "+";
-  else if (subtractOperator) operator = "-";
-  else if (multiplyOperator) operator = "*";
-  else operator = operator_type;
+  if (addition) {
+    result = eval(`${x} ${OPERATOR_TYPE.addition.type} ${y}`);
+    return validResponse(OPERATOR_TYPE.addition.value, result);
+  }
 
-  //perform operation
-  result = eval(`${x} ${operator} ${y}`);
+  if (subtraction) {
+    result = eval(`${x} ${OPERATOR_TYPE.subtraction.type} ${y}`);
+    return validResponse(OPERATOR_TYPE.subtraction.value, result);
+  }
 
-  return res.status(200).send({
-    slackUsername: "Toluu",
-    operator_type: operator,
-    result,
-  });
+  if (multiplication) {
+    result = eval(`${x} ${OPERATOR_TYPE.multiplication.type} ${y}`);
+    return validResponse(OPERATOR_TYPE.multiplication.value, result);
+  }
 });
 
 app.listen(port, () => {
