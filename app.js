@@ -77,7 +77,7 @@ app.post("/", function (req, res) {
   //perform operation
   result = eval(`${x} ${operator} ${y}`);
 
-  return res.status(200).send({
+  return res.status(201).send({
     slackUsername: "Toluu",
     operator_type: operator,
     result,
