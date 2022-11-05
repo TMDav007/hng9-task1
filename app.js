@@ -86,7 +86,8 @@ app.post("/", function (req, res) {
   }
 
   const validResponse = (operatorType, result) => {
-    return res.status(201).send({
+    return res.status(200).send({
+
       slackUsername: "Toluu",
       operation_type: operatorType,
       result,
