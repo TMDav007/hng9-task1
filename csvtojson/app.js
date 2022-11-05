@@ -8,7 +8,7 @@ let object= {}
 const firstArray = []
 for (let i = 0; i < json.length; i++) {
  // console.log(JSON.parse(`'{${JSON.stringify(json[1].Attributes)}}'`));
- console.log(json[i].Attributes.split(';'));
+ console.log(json[i].Attributes);
 //  json[i].Attributes.split(';').forEach((ele, i) => {
 //     //firstArray.push([ele])
 //     console.log([ele])

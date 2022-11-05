@@ -53,6 +53,16 @@ app.post("/", function (req, res) {
   let addition;
   let subtraction;
   let multiplication;
+
+  //Dynamic Response
+  function validResponse(operatorType, result) {
+    return res.status(200).send({
+      slackUsername: "Toluu",
+      operation_type: operatorType,
+      result,
+    });
+  }
+
   const OPERATOR_TYPE = {
     addition: {
       type: "+",
@@ -70,46 +80,37 @@ app.post("/", function (req, res) {
 
   //test the operator type is a string(word)
   // check that the required operator type exists
+
+  let operator;
   addition =
-    operation_type.includes("add") || operation_type.includes("addition");
+    operation_type.includes("add") || operation_type.includes("addition")
+      ? "addition"
+      : "";
   subtraction =
-    operation_type.includes("subtract") || operation_type.includes("minus");
+    operation_type.includes("subtract") || operation_type.includes("minus")
+      ? "subtraction"
+      : "";
   multiplication =
-    operation_type.includes("multiply") || operation_type.includes("times");
+    operation_type.includes("multiply") || operation_type.includes("times")
+      ? "multiplication"
+      : "";
 
-  const isOperatorExist = addition || multiplication || subtraction;
+  operator = addition || multiplication || subtraction;
 
-  if (!isOperatorExist) {
+  // check if operator type exists
+  if (!operator) {
     return res.status(400).send({
       error: "Invalid request, operator type must be present",
     });
   }
 
-  const validResponse = (operatorType, result) => {
-    return res.status(200).send({
+  result = eval(`${x} ${OPERATOR_TYPE[operator].type} ${y}`);
+  return validResponse(OPERATOR_TYPE[operator].value, result);
 
-      slackUsername: "Toluu",
-      operation_type: operatorType,
-      result,
-    });
-  };
-
-  if (addition) {
-    result = eval(`${x} ${OPERATOR_TYPE.addition.type} ${y}`);
-    return validResponse(OPERATOR_TYPE.addition.value, result);
-  }
-
-  if (subtraction) {
-    result = eval(`${x} ${OPERATOR_TYPE.subtraction.type} ${y}`);
-    return validResponse(OPERATOR_TYPE.subtraction.value, result);
-  }
-
-  if (multiplication) {
-    result = eval(`${x} ${OPERATOR_TYPE.multiplication.type} ${y}`);
-    return validResponse(OPERATOR_TYPE.multiplication.value, result);
-  }
 });
 
 app.listen(port, () => {
   console.log("server live at " + port);
 });
+
+
