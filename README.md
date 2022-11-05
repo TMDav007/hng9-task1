@@ -9,6 +9,9 @@ This is setup a server and create a GET api endpoint that returns Json
 # Technology
  [NodeJs](https://https://nodejs.org/en/) - Runtime Environment
 
+# live API
+https://hngstagee1.herokuapp.com/
+
 # Features
 Get request
 
