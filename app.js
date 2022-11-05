@@ -1,14 +1,16 @@
-const http = require("http");
 const bodyParser = require("body-parser");
 const express = require("express");
+const multer = require("multer");
+const upload = multer();
 
 const app = express();
 const port = process.env.PORT || 4000;
+app.use(upload.none());
 
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
-    extended: true,
+    extended: false,
   })
 );
 
