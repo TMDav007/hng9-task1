@@ -24,10 +24,10 @@ app.get("/", (req, res) => {
 
 //POST method to perform operation
 app.post("/", function (req, res) {
-  const { operator_type, x, y } = req.body;
+  const { operation_type, x, y } = req.body;
 
   //Check if input are not empty
-  if (!operator_type || !x || !y) {
+  if (!operation_type || !x || !y) {
     return res.status(400).send({
       error: "Invalid request, pls input valid data and try again",
     });
@@ -40,8 +40,9 @@ app.post("/", function (req, res) {
     });
   }
 
-  //check that the operator_type is valid
-  const isOperatorValid = typeof operator_type === "string";
+  //check that the operation_type is valid
+  const isOperatorValid = typeof operation_type === "string";
+
   if (!isOperatorValid) {
     return res.status(400).send({
       error:
@@ -70,11 +71,11 @@ app.post("/", function (req, res) {
   //test the operator type is a string(word)
   // check that the required operator type exists
   addition =
-    operator_type.includes("add") || operator_type.includes("addition");
+    operation_type.includes("add") || operation_type.includes("addition");
   subtraction =
-    operator_type.includes("subtract") || operator_type.includes("minus");
+    operation_type.includes("subtract") || operation_type.includes("minus");
   multiplication =
-    operator_type.includes("multiply") || operator_type.includes("times");
+    operation_type.includes("multiply") || operation_type.includes("times");
 
   const isOperatorExist = addition || multiplication || subtraction;
 
@@ -87,7 +88,7 @@ app.post("/", function (req, res) {
   const validResponse = (operatorType, result) => {
     return res.status(201).send({
       slackUsername: "Toluu",
-      operator_type: operatorType,
+      operation_type: operatorType,
       result,
     });
   };
