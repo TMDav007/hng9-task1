@@ -42,6 +42,7 @@ app.post("/", function (req, res) {
 
   //check that the operation_type is valid
   const isOperatorValid = typeof operation_type === "string";
+
   if (!isOperatorValid) {
     return res.status(400).send({
       error:
